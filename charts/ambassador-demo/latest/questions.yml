@@ -24,7 +24,7 @@ questions:
   group: Main Settings
   required: true
 - variable: consul.address
-  default: "consul.service.automium.consul:8500"
+  default: "consul.service.automium.consul"
   type: string
   label: Consul API Endpoint
   group: Consul Settings
