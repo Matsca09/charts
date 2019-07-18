@@ -11,6 +11,8 @@ consul:
 
 ambassador:
   replicaCount: 1
+  dnsPolicy: ClusterFirstWithHostNet
+  hostNetwork: true
 
   service:
     type: ClusterIP
