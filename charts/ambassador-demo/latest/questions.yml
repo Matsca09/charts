@@ -23,3 +23,21 @@ questions:
   label: Number of replicas 
   group: Main Settings
   required: true
+- variable: consul.address
+  default: "consul.service.automium.consul:8500"
+  type: string
+  label: Consul API Endpoint
+  group: Consul Settings
+  required: true
+- variable: consul.datacenter
+  default: "automium"
+  type: string
+  label: Consul Datacenter
+  group: Consul Settings
+  required: true
+- variable: consul.encrypt
+  default: ""
+  type: string
+  label: Consul Encryption Key
+  group: Consul Settings
+  required: false
