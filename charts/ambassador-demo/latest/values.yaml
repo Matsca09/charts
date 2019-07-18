@@ -10,7 +10,7 @@ consul:
   encrypt: encryptionkey  
 
 ambassador:
-  replicaCount: 1
+  replicaCount: 2
   dnsPolicy: ClusterFirstWithHostNet
   hostNetwork: true
   securityContext:
