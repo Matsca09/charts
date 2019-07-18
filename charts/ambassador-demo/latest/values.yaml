@@ -1,0 +1,20 @@
+# supported application versions: acl, encrypt, basic and latest
+version: latest
+
+replicas: 1
+
+ambassador:
+  replicaCount: 1
+
+  service:
+    type: ClusterIP
+
+    annotations:
+      # address: consul.service.automium.consul:8500
+      getambassador.io/config: |
+        ---
+        apiVersion: ambassador/v1
+        kind: ConsulResolver
+        name: consul-automium
+        address: consul-consul-server.default.svc.cluster.local:8500
+        datacenter: automium

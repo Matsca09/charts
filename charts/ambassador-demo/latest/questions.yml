@@ -1,0 +1,25 @@
+questions:
+- variable: nameOverride
+  default: "demo"
+  type: string
+  label: Service Name
+  required: true
+  group: Main Settings
+- variable: version
+  default: "latest"
+  description: "Use acl or encrypt versions if are enabled in Consul"
+  type: enum
+  options:
+    - "acl"
+    - "basic"
+    - "latest"
+    - "encrypt"
+    - "encrypt-basic"
+  label: Application Version
+  group: Main Settings
+- variable: replicas
+  default: 1
+  type: int
+  label: Number of replicas 
+  group: Main Settings
+  required: true
