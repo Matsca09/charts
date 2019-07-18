@@ -17,9 +17,20 @@ ambassador:
   service:
     type: ClusterIP
 
+    http:
+      enabled: true
+      port: 80
+      targetPort: 80
+
     annotations:
       # address: consul-consul-server.default.svc.cluster.local:8500
       getambassador.io/config: |
+        ---
+        apiVersion: ambassador/v1
+        kind: Module
+        name: ambassador
+        config:
+          service_port: 80
         ---
         apiVersion: ambassador/v1
         kind: ConsulResolver
