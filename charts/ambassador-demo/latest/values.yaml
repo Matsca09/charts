@@ -13,6 +13,8 @@ ambassador:
   replicaCount: 1
   dnsPolicy: ClusterFirstWithHostNet
   hostNetwork: true
+  securityContext:
+    enabled: false
 
   service:
     type: ClusterIP
