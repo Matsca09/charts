@@ -1,0 +1,13 @@
+nodePool: &ingress_nodepool ingresspool
+
+nginx-ingress:
+  controller:
+    kind: DaemonSet
+    hostNetwork: true
+    dnsPolicy: ClusterFirstWithHostNet
+    service:
+      type: ClusterIP
+    stats:
+      enabled: true
+    nodeSelector:
+      nodepool: *ingress_nodepool

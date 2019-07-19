@@ -3,7 +3,7 @@ appVersion: "0.25.0"
 description: NGINX Ingress Controller
 icon: https://raw.githubusercontent.com/kubernetes/kubernetes/master/logo/logo.svg
 name: nginx-ingress-controller
-version: 0.25.0
+version: 1.10.3
 keywords:
 - example
 home: https://github.com/kubernetes/ingress-nginx

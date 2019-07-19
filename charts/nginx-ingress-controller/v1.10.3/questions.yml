@@ -1,0 +1,11 @@
+categories:
+- Ingress
+- Network
+questions:
+- variable: nodePool
+  default: "ingressPool"
+  description: "NodePool on which the ingress controller will be deployed as DaemonSet"
+  type: string
+  required: true
+  label: Target NodePool
+  group: "Ingress Controller Settings"
