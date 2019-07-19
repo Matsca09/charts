@@ -7,7 +7,5 @@ nginx-ingress:
     dnsPolicy: ClusterFirstWithHostNet
     service:
       type: ClusterIP
-    stats:
-      enabled: true
     nodeSelector:
       nodepool: *ingress_nodepool
