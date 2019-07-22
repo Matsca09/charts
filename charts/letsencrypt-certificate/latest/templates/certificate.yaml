@@ -13,5 +13,5 @@ spec:
       domains:
       - {{ .Values.domain }}
   issuerRef:
-    name: letencrypt-prod
+    name: letsencrypt-prod
     kind: ClusterIssuer
