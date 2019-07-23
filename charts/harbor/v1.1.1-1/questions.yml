@@ -1,0 +1,62 @@
+categories:
+- System
+- Registry
+questions:
+- variable: harbor.expose.ingress.hosts.core
+  type: string
+  required: true
+  label: "Harbor domain ( without http/https:// )"
+  group: "Ingress settings"
+- variable: harbor.externalURL
+  type: string
+  required: true
+  label: "Harbor external URL ( usually Harbor domain with https:// )"
+  group: "Ingress settings"
+- variable: harbor.expose.tls.secretName
+  type: string
+  required: true
+  label: "Certificate secret to use for Harbor ingress"
+  group: "Ingress settings"
+- variable: harbor.secretKey
+  type: password
+  required: true
+  max_length: 16
+  label: "Harbor secret key (max 16 chars)"
+  group: "Account settings"
+- variable: harbor.database.internal.password
+  type: password
+  required: true
+  label: "Database password"
+  group: "Account settings"
+- variable: harbor.harborAdminPassword
+  type: password
+  required: true
+  label: "Harbor admin password"
+  group: "Account settings"
+- variable: harbor.persistence.persistentVolumeClaim.registry.storageClass
+  type: storageclass
+  required: true
+  label: "StorageClass used for registry volume"
+  group: "Storage settings"
+- variable: harbor.persistence.persistentVolumeClaim.registry.size
+  default: 10
+  type: int
+  required: true
+  label: "Registry volume size (in GB)"
+  group: "Storage settings"
+- variable: harbor.persistence.persistentVolumeClaim.database.storageClass
+  type: storageclass
+  required: true
+  label: "StorageClass for database volume"
+  group: "Storage settings"
+- variable: harbor.persistence.persistentVolumeClaim.database.size
+  default: 10
+  type: int
+  required: true
+  label: "Database volume size (in GB)"
+  group: "Storage settings"
+- variable: harbor.persistence.persistentVolumeClaim.redis.storageClass
+  type: storageclass
+  required: true
+  label: "StorageClass for redis volume"
+  group: "Storage settings"
