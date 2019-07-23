@@ -21,6 +21,7 @@ questions:
   type: password
   required: true
   max_length: 16
+  invalid_chars: "[^A-Za-z0-9]"
   label: "Harbor secret key (max 16 chars)"
   group: "Account settings"
 - variable: harbor.database.internal.password
@@ -39,10 +40,10 @@ questions:
   label: "StorageClass used for registry volume"
   group: "Storage settings"
 - variable: harbor.persistence.persistentVolumeClaim.registry.size
-  default: 10
-  type: int
+  default: "10Gi"
+  type: string
   required: true
-  label: "Registry volume size (in GB)"
+  label: "Registry volume size"
   group: "Storage settings"
 - variable: harbor.persistence.persistentVolumeClaim.database.storageClass
   type: storageclass
@@ -50,10 +51,10 @@ questions:
   label: "StorageClass for database volume"
   group: "Storage settings"
 - variable: harbor.persistence.persistentVolumeClaim.database.size
-  default: 10
-  type: int
+  default: "10Gi"
+  type: string
   required: true
-  label: "Database volume size (in GB)"
+  label: "Database volume size"
   group: "Storage settings"
 - variable: harbor.persistence.persistentVolumeClaim.redis.storageClass
   type: storageclass
