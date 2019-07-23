@@ -2,7 +2,7 @@ categories:
 - Ingress
 - Network
 questions:
-- variable: nodePool
+- variable: nginx-ingress.controller.nodeSelector.nodepool
   default: "ingressPool"
   description: "NodePool on which the ingress controller will be deployed as DaemonSet"
   type: string
