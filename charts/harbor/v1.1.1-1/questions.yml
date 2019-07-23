@@ -21,8 +21,7 @@ questions:
   type: password
   required: true
   max_length: 16
-  invalid_chars: "[^A-Za-z0-9]"
-  label: "Harbor secret key (max 16 chars)"
+  label: "Harbor secret key (max 16 alphanumeric chars)"
   group: "Account settings"
 - variable: harbor.database.internal.password
   type: password
