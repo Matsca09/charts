@@ -36,11 +36,18 @@ spec:
         image: k8s.gcr.io/metrics-server-amd64:v0.3.3
         args:
         - --alsologtostderr
-        - -v=1
+        - -v={{ .Values.verboseLevel }}
+        - --metric-resolution={{ .Values.metricResolution }}
         - --kubelet-insecure-tls
         - --requestheader-client-ca-file=/etc/kubernetes/pki/front-proxy-ca.crt
         volumeMounts:
         - name: tmp-dir
           mountPath: /tmp
         - name: certs-dir
-          mountPath: /etc/kubernetes/pki
+          mountPath: /etc/kubernetes/pki/front-proxy-ca.crt
+          subPath: front-proxy-ca.crt
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
