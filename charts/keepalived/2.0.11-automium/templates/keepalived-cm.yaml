@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-keepalived-conf
+data:
+  vip-ips: |-
+     {{- range (splitList ";" .Values.vips) }}
+     {{ . }}
+     {{- end }}
+  render.sh: |-
+     #!/bin/sh
+     set -e
+
+     RS_ID=$(echo $INSTANCE | cut -d "-" -f3)
+     PRI=$(( RS_ID + 1 ))
+
+     cat > /config/keepalived.conf <<EOF
+     vrrp_instance ${INSTANCE} {
+         state MASTER
+         interface ${INTERFACE}
+         virtual_router_id ${ROUTER_ID}
+         priority ${PRI}
+         authentication {
+             auth_type PASS
+             auth_pass {{ .Values.authPass }}
+         }
+         virtual_ipaddress {
+             $(cat /tmpl/vip-ips)
+         }
+     }
+     EOF

@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-keepalived-svc
+  labels:
+    app: {{ .Release.Name }}-keepalived
+spec:
+  ports:
+  - port: 1
+    name: serviceport
+  clusterIP: None
+  selector:
+    app: {{ .Release.Name }}-keepalived

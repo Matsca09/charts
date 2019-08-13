@@ -1,0 +1,66 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-keepalived
+spec:
+  serviceName: {{ .Release.Name }}-keepalived-svc
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-keepalived
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-keepalived
+    spec:
+      nodeSelector:
+        nodepool: {{ .Values.targetPool }}
+      hostNetwork: true
+      initContainers:
+      - name: render-config
+        image: busybox:latest
+        command:
+        - /bin/sh
+        - /tmpl/render.sh
+        env:
+        - name: ROUTER_ID
+          value: {{ .Values.routerID | quote }}
+        - name: INTERFACE
+          value: {{ .Values.listenInterface | quote }}
+        - name: INSTANCE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        volumeMounts:
+          - name: cm-tmpl
+            mountPath: /tmpl
+          - name: conf
+            mountPath: /config
+      containers:
+      - name: keepalived
+        image: automium/keepalived:2.0.11-alpine
+        securityContext:
+          capabilities:
+            add: ["NET_ADMIN"]
+        volumeMounts:
+        - name: conf
+          mountPath: /etc/keepalived
+      terminationGracePeriodSeconds: 10
+      volumes:
+      - name: cm-tmpl
+        configMap:
+          name: {{ .Release.Name }}-keepalived-conf
+      - name: conf
+        emptyDir:
+          medium: "Memory"
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                    - {{ .Release.Name }}-keepalived
+              topologyKey: "kubernetes.io/hostname"

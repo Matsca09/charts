@@ -1,0 +1,31 @@
+categories:
+- Network
+questions:
+- variable: replicas
+  type: int
+  required: true
+  default: 1
+  label: "Desired replicas"
+- variable: targetPool
+  type: string
+  required: true
+  label: "Nodepool on which keepalived will be deployed"
+- variable: routerID
+  type: string
+  required: true
+  default: "10"
+  label: "Router ID"
+- variable: listenInterface
+  type: string
+  required: true
+  default: "ens3"
+  label: "Host interface on which keepalived will operate"
+- variable: authPass
+  type: password
+  required: true
+  max_length: 6
+  label: "Authentication password ( 6 chars )"
+- variable: vips
+  type: string
+  required: true
+  label: "Virtual IPs to use with keepalived. Use ';' as separator for multiple IPs"

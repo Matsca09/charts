@@ -1,0 +1,6 @@
+replicas: 1
+targetPool: ""
+routerID: "10"
+listenInterface: "ens3"
+authPass: ""
+vips: ""
