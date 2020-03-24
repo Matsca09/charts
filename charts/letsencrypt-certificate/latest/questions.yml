@@ -1,8 +1,0 @@
-categories:
-- System
-questions:
-- variable: domain
-  default: ""
-  type: string
-  required: true
-  label: "Domain"
