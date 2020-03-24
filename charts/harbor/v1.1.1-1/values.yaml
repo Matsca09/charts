@@ -1,5 +1,0 @@
-harbor:
-  notary:
-    enabled: false
-  chartmuseum:
-    enabled: false
