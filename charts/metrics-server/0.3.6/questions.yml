@@ -1,0 +1,13 @@
+categories:
+- System
+questions:
+- variable: verboseLevel
+  type: string
+  default: "1"
+  required: true
+  label: "metrics-server verbosity level (1-10)"
+- variable: metricResolution
+  type: string
+  default: "1m0s"
+  required: true
+  label: "metrics-server metrics resolution time"
