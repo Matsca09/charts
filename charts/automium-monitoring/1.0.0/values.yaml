@@ -5,6 +5,10 @@ prometheus:
     enabled: false
   nodeExporter:
     enabled: true 
+    tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
   pushgateway: 
     enabled: false
   kubeStateMetrics:
