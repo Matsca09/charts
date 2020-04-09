@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: automium-prometheus-config
+  namespace: {{ .Release.Namespace }}
+data:
+  rules: ""
+  alerts: ""

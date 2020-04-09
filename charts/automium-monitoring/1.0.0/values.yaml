@@ -1,0 +1,80 @@
+---
+# Prometheus ###
+prometheus:
+  alertmanager: 
+    enabled: false
+  nodeExporter:
+    enabled: true 
+  pushgateway: 
+    enabled: false
+  kubeStateMetrics:
+    enabled: true
+  rbac: 
+    namespaced: true
+  server: 
+    ingress: 
+      enabled: false
+    service: 
+      type: "ClusterIP"
+    persistentVolume: 
+      enabled: true
+      size: "10Gi"
+    extraConfigmapMounts:
+    - name: automium-prometheus-config
+      configMap: automium-prometheus-config
+      mountPath: /etc/prometheus/automium
+    extraSecretMounts:
+    - name: etcd-certs
+      secretName: etcd-certs
+      mountPath: /etc/prometheus/certs
+  serverFiles: 
+    prometheus.yml:
+      rule_files:
+        - /etc/prometheus/automium/rules
+        - /etc/prometheus/automium/alerts
+  extraScrapeConfigs: |-
+    - job_name: etcd-metrics
+      kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names:
+          - kube-system
+      scheme: https
+      tls_config:
+        ca_file: /etc/prometheus/certs/ca.crt
+        cert_file: /etc/prometheus/certs/prometheus.pem
+        key_file: /etc/prometheus/certs/prometheus_key.pem
+      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      relabel_configs:
+      - source_labels: ["__meta_kubernetes_service_label_k8s_app"]
+        regex: etcd-server
+        replacement: $1
+        action: keep
+      - source_labels: ["__meta_kubernetes_pod_host_ip"]
+        target_label: host_ip
+        action: replace
+        regex: (.+)
+        replacement: $1
+      - source_labels: ["__meta_kubernetes_pod_node_name"]
+        target_label: node
+        action: replace
+        regex: (.+)
+        replacement: $1
+# Grafana ###
+grafana:
+  enabled: true
+  adminUser: "admin"
+  persistence: 
+    enabled: true
+    size: "10Gi"
+  ingress: 
+    enabled: false
+  service: 
+    type: "NodePort"
+    nodePort: "30000"
+  sidecar:
+    datasources:
+      enabled: true
+    dashboards: 
+      enabled: true
+
