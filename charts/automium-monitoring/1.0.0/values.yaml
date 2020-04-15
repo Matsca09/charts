@@ -21,6 +21,14 @@ prometheus:
       effect: NoSchedule
   rbac: 
     namespaced: true
+  configmapReload:
+    prometheus:
+      extraVolumeDirs:
+      - /etc/config/automium
+      extraConfigmapMounts:
+      - name: automium-prometheus-config
+        configMap: automium-prometheus-config
+        mountPath: /etc/config/automium
   server: 
     ingress: 
       enabled: false
@@ -57,6 +65,12 @@ prometheus:
     prometheus.yml:
       rule_files:
         - /etc/prometheus/automium/rules
+      alerting:
+        alertmanagers:
+        - scheme: https
+          path_prefix: /
+          static_configs:
+            - targets: []
   extraScrapeConfigs: |-
     - job_name: etcd-metrics
       kubernetes_sd_configs:
