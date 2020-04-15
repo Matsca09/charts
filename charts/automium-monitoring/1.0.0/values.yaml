@@ -11,8 +11,14 @@ prometheus:
       effect: NoSchedule
   pushgateway: 
     enabled: false
-  kubeStateMetrics:
+  kube-state-metrics:
     enabled: true
+    nodeSelector:
+      node-role.kubernetes.io/master: ""
+    tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
   rbac: 
     namespaced: true
   server: 
@@ -22,7 +28,7 @@ prometheus:
       type: "ClusterIP"
     persistentVolume: 
       enabled: true
-      size: "10Gi"
+      size: "50Gi"
     extraConfigmapMounts:
     - name: automium-prometheus-config
       configMap: automium-prometheus-config
@@ -31,11 +37,26 @@ prometheus:
     - name: etcd-certs
       secretName: etcd-certs
       mountPath: /etc/prometheus/certs
+    retention: 120h
+    nodeSelector:
+      node-role.kubernetes.io/master: ""
+    tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
+    strategy:
+      type: Recreate
+    resources:
+      requests:
+        cpu: 0.5
+        memory: 128Mi
+      limits:
+        cpu: 2
+        memory: 2Gi
   serverFiles: 
     prometheus.yml:
       rule_files:
         - /etc/prometheus/automium/rules
-        - /etc/prometheus/automium/alerts
   extraScrapeConfigs: |-
     - job_name: etcd-metrics
       kubernetes_sd_configs:
@@ -70,7 +91,7 @@ grafana:
   adminUser: "admin"
   persistence: 
     enabled: true
-    size: "10Gi"
+    size: "1Gi"
   ingress: 
     enabled: false
   service: 
@@ -81,4 +102,11 @@ grafana:
       enabled: true
     dashboards: 
       enabled: true
-
+  nodeSelector:
+    node-role.kubernetes.io/master: ""
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
+  deploymentStrategy:
+    type: Recreate
