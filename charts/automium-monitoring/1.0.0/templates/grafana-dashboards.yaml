@@ -1,0 +1,16 @@
+{{ $files := .Files.Glob "dashboards/*.json" }}
+{{- if $files }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: automium-monitoring-dashboards
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{ $.Values.grafana.sidecar.dashboards.label }}: "1"
+data:
+{{- range $path, $fileContents := $files }}
+{{- $dashboardName := regexReplaceAll "(^.*/)(.*)\\.json$" $path "${2}" }}
+  {{ $dashboardName }}.json: {{ $.Files.Get $path | toJson }}
+{{- end }}
+{{- end }}
