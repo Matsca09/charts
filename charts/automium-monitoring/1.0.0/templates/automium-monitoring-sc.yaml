@@ -1,0 +1,11 @@
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: automium-monitoring-sc
+provisioner: {{ .Values.automium.storageClass.provisioner }} 
+parameters:
+{{- range $paramName, $paramVal := .Values.automium.storageClass.parameters }}
+  {{ $paramName }}: {{ $paramVal }}
+{{- end }}
+volumeBindingMode: Immediate
