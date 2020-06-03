@@ -1,0 +1,60 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: automium-backup-files
+  namespace: {{ .Release.Namespace }}
+data:
+  backup-files.list: |-
+    /etc/kubernetes/pki/ca.crt
+    /etc/kubernetes/pki/ca.key
+    /etc/kubernetes/pki/front-proxy-ca.crt
+    /etc/kubernetes/pki/front-proxy-ca.key
+    /etc/kubernetes/pki/sa.pub
+    /etc/kubernetes/pki/sa.key
+    /etc/kubernetes/pki/etcd/ca.crt
+    /etc/kubernetes/pki/etcd/ca.key
+    /root/etcd.snap
+  backup.sh: |-
+    #!/bin/bash
+    set -e
+
+    echo "### Starting backup operation..."
+    ETCDCTL_API=3 etcdctl --cacert /etc/kubernetes/pki/etcd/ca.crt --cert /etc/kubernetes/pki/etcd/server.crt --key /etc/kubernetes/pki/etcd/server.key --endpoints "https://{{ .Values.clusterName}}-etcd.service.automium.consul:2379" snapshot save /root/etcd.snap
+    ETCDCTL_API=3 etcdctl snapshot status /root/etcd.snap
+
+    source /backup/env
+    export RESTIC_REPOSITORY="{{ .Values.backupRepository }}"
+    restic backup --host "{{ .Values.clusterName }}" --tag cluster-backup --files-from /backup/files/backup-files.list
+    
+    echo "### Backup operation completed. Starting retention process..."
+    restic forget --prune --group-by "host,tags" --host "{{ .Values.clusterName }}" --tag cluster-backup --keep-within {{ .Values.retention }} --compact
+    echo "### Retention process completed"
+    exit 0
+  init.sh: |-
+    #!/bin/bash
+
+    export RESTIC_REPOSITORY="{{ .Values.backupRepository }}"
+    source /backup/env
+    echo "### Check for a remote Restic repository"
+    RESTIC_SNAP_OUTPUT="$(restic snapshots 2>&1)"
+    if [ $? -eq 0 ]; then
+      echo "### Restic repository found"
+      exit 0
+    fi
+
+    if [ ! -z "$(echo ${RESTIC_SNAP_OUTPUT} | grep 'Is there a repository at the following location')" ]; then
+      echo "### No repository detected. Initializing a new one"
+      restic init
+      if [ $? -eq 0 ]; then
+        echo "### Done"
+        exit 0
+      else
+        echo "### Cannot initialize remote repository"
+        exit 1
+      fi
+    fi
+
+    echo "### Cannot detect if there is a remote repository - Restic output:"
+    echo ${RESTIC_SNAP_OUTPUT}
+    exit 1

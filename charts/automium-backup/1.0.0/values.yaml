@@ -1,0 +1,5 @@
+clusterName: ""
+backupEnv: ""
+backupRepository: ""
+backupSchedule: "0 */4 * * *"
+retention: "1m"

@@ -1,0 +1,45 @@
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: automium-backup-job
+  namespace: {{ .Release.Namespace }}
+spec:
+  concurrencyPolicy: Forbid
+  schedule: {{ .Values.backupSchedule | quote }}
+  successfulJobsHistoryLimit: 5
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+          - name: restic
+            image: automium/restic:0.9.6
+            command: ["/bin/bash", "/backup/files/backup.sh"]
+            volumeMounts:
+            - name: cm-files
+              mountPath: /backup/files
+            - name: host-certs
+              mountPath: /etc/kubernetes/pki
+              readOnly: true
+            - name: backup-env
+              mountPath: /backup/env
+              subPath: env
+          volumes:
+          - name: cm-files
+            configMap:
+              name: automium-backup-files
+          - name: host-certs
+            hostPath:
+              path: /etc/kubernetes/pki
+          - name: backup-env
+            secret:
+              secretName: automium-backup-secrets
+              defaultMode: 0600
+          nodeSelector:
+            node-role.kubernetes.io/master: ""
+          tolerations:
+          - effect: NoSchedule
+            key: node-role.kubernetes.io/master
