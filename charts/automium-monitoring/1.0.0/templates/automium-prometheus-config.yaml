@@ -6,22 +6,131 @@ metadata:
 data:
   rules: |-
     groups:
-    - name: etcd
+    - name: general_rules
       rules:
-      - alert: HighLeaderChanges 
-        expr: increase(etcd_server_leader_changes_seen_total[1h]) > 3
-        for: 3m
-        labels:
-          severity: warning
-        annotatations:
-          summary: A high number of leader changes within the etcd cluster are happening
-      - alert: NoLeader
-        expr: etcd_server_has_leader != 1
+      - alert: metricsEndpointIsDown
+        annotations:
+          {{` message: 'can not scrape metrics from "{{ $labels.job }}"' `}}
+        expr: |
+          up == 0
         for: 3m
         labels:
           severity: critical
-        annotatations:
-          summary: Etcd member has no leader
+    - name: etcd
+      rules:
+      - alert: etcdMembersDown
+        annotations:
+          {{` message: 'etcd cluster "{{ $labels.job }}": members are down ({{ $value }}).' `}}
+        expr: |
+          max by (job) (
+            sum by (job) (up{job=~".*etcd.*"} == bool 0)
+          or
+            count by (job,endpoint) (
+              sum by (job,endpoint,To) (rate(etcd_network_peer_sent_failures_total{job=~".*etcd.*"}[3m])) > 0.01
+            )
+          )
+          > 0
+        for: 3m
+        labels:
+          severity: critical
+      - alert: etcdInsufficientMembers
+        annotations:
+          {{` message: 'etcd cluster "{{ $labels.job }}": insufficient members ({{ $value }}).' `}}
+        expr: |
+          sum(up{job=~".*etcd.*"} == bool 1) by (job) < ((count(up{job=~".*etcd.*"}) by (job) + 1) / 2)
+        for: 3m
+        labels:
+          severity: critical
+      - alert: etcdNoLeader
+        annotations:
+          {{` message: 'etcd cluster "{{ $labels.job }}": member {{ $labels.instance }} has no leader.' `}}
+        expr: |
+          etcd_server_has_leader{job=~".*etcd.*"} == 0
+        for: 1m
+        labels:
+          severity: critical
+      - alert: etcdHighNumberOfLeaderChanges
+        annotations:
+          {{` message: 'etcd cluster "{{ $labels.job }}": {{ $value }} leader changes within `}}
+            the last 15 minutes. Frequent elections may be a sign of insufficient resources,
+            high network latency, or disruptions by other components and should be investigated.'
+        expr: |
+          increase((max by (job) (etcd_server_leader_changes_seen_total{job=~".*etcd.*"}) or 0*absent(etcd_server_leader_changes_seen_total{job=~".*etcd.*"}))[15m:1m]) >= 3
+        for: 5m
+        labels:
+          severity: warning
+      - alert: etcdGRPCRequestsSlow
+        annotations:
+          {{` message: 'etcd cluster "{{ $labels.job }}": gRPC requests to {{ $labels.grpc_method }} are taking {{ $value }}s on etcd instance {{ $labels.instance }}.' `}}
+        expr: |
+          histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{job=~".*etcd.*", grpc_type="unary"}[5m])) by (job, instance, grpc_service, grpc_method, le))
+          > 0.15
+        for: 10m
+        labels:
+          severity: critical
+      - alert: etcdMemberCommunicationSlow
+        annotations:
+          {{` message: 'etcd cluster "{{ $labels.job }}": member communication with {{ $labels.To }} is taking {{ $value }}s on etcd instance {{ $labels.instance }}.' `}}
+        expr: |
+          histogram_quantile(0.99, rate(etcd_network_peer_round_trip_time_seconds_bucket{job=~".*etcd.*"}[5m]))
+          > 0.15
+        for: 10m
+        labels:
+          severity: warning
+      - alert: etcdHighNumberOfFailedProposals
+        annotations:
+          {{` message: 'etcd cluster "{{ $labels.job }}": {{ $value }} proposal failures within the last 30 minutes on etcd instance {{ $labels.instance }}.' `}}
+        expr: |
+          rate(etcd_server_proposals_failed_total{job=~".*etcd.*"}[15m]) > 5
+        for: 15m
+        labels:
+          severity: warning
+      - alert: etcdHighFsyncDurations
+        annotations:
+          {{` message: 'etcd cluster "{{ $labels.job }}": 99th percentile fync durations are {{ $value }}s on etcd instance {{ $labels.instance }}.' `}}
+        expr: |
+          histogram_quantile(0.99, rate(etcd_disk_wal_fsync_duration_seconds_bucket{job=~".*etcd.*"}[5m]))
+          > 0.5
+        for: 10m
+        labels:
+          severity: warning
+      - alert: etcdHighCommitDurations
+        annotations:
+          {{` message: 'etcd cluster "{{ $labels.job }}": 99th percentile commit durations {{ $value }}s on etcd instance {{ $labels.instance }}.' `}}
+        expr: |
+          histogram_quantile(0.99, rate(etcd_disk_backend_commit_duration_seconds_bucket{job=~".*etcd.*"}[5m]))
+          > 0.25
+        for: 10m
+        labels:
+          severity: warning
+      - alert: etcdHighNumberOfFailedHTTPRequests
+        annotations:
+          {{` message: '{{ $value }}% of requests for {{ $labels.method }} failed on etcd instance {{ $labels.instance }}' `}}
+        expr: |
+          sum(rate(etcd_http_failed_total{job=~".*etcd.*", code!="404"}[5m])) BY (method) / sum(rate(etcd_http_received_total{job=~".*etcd.*"}[5m]))
+          BY (method) > 0.01
+        for: 10m
+        labels:
+          severity: warning
+      - alert: etcdHighNumberOfFailedHTTPRequests
+        annotations:
+          {{` message: '{{ $value }}% of requests for {{ $labels.method }} failed on etcd instance {{ $labels.instance }}.' `}}
+        expr: |
+          sum(rate(etcd_http_failed_total{job=~".*etcd.*", code!="404"}[5m])) BY (method) / sum(rate(etcd_http_received_total{job=~".*etcd.*"}[5m]))
+          BY (method) > 0.05
+        for: 10m
+        labels:
+          severity: critical
+      - alert: etcdHTTPRequestsSlow
+        annotations:
+          {{` message: etcd instance {{ $labels.instance }} HTTP requests to {{ $labels.method }} are slow. `}}
+        expr: |
+          histogram_quantile(0.99, rate(etcd_http_successful_duration_seconds_bucket[5m]))
+          > 0.15
+        for: 10m
+        labels:
+          severity: warning
+
     - name: node
       rules:
       - alert: HighCPULoad 
@@ -30,28 +139,82 @@ data:
         labels:
           severity: warning
         annotatations:
-          summary: High CPU usage on node
+          message: High CPU usage on node
+    
       - alert: HighMemoryUsage
         expr: ( 1 - sum(node_memory_MemAvailable_bytes) by (instance) / sum(node_memory_MemTotal_bytes) by (instance) ) >= 80
         for: 3h
         labels:
           severity: warning
         annotatations:
-          summary: High memory usage on node
-      - alert: PodEvictionIn24h
-        expr: ( predict_linear(node_filesystem_avail_bytes{mountpoint='/'}[1h], 24 * 3600) and ( 100 - ((node_filesystem_avail_bytes{mountpoint='/',fstype!='rootfs'} * 100) / node_filesystem_size_bytes{mountpoint='/',fstype!='rootfs'}) > 85) ) < 0
-        for: 3h
+          message: High memory usage on node
+          
+      - alert: NodeDiskRunningFullIn24Hours
+        expr: predict_linear(node_filesystem_free_bytes{mountpoint="/"}[6h], 24 * 3600) < 0 and ON(device) (node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100 < 15
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          {{` message: Mount point {{ $labels.mountpoint }} on device {{ $labels.device }} on node {{ $labels.instance }} is running full within the next 24 hours. `}}
+      
+      - alert: NodeDiskRunningFullIn2Hours
+        expr: predict_linear(node_filesystem_free_bytes{mountpoint="/"}[3h], 2 * 3600) < 0 and ON(device) (node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100 < 15
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          {{` message: Mount point {{ $labels.mountpoint }} on device {{ $labels.device }} on node {{ $labels.instance }} is running full within the next 2 hours. `}}
+      
+      - alert: NodeDiskRunningFull
+        expr: node_filesystem_free_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"} * 100 < 3
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          {{` message: device {{ $labels.device }} on node {{ $labels.instance }} is full at {{ $value }}% `}}
+
+    - name: nodeKubernetesStatus
+      rules:
+      - alert: nodeDiskPressure
+        expr: kube_node_status_condition{condition="DiskPressure",status="true"} == 1
+        for: 10m
         labels:
           severity: warning
         annotatations:
-          summary: Node will evict pods in the next 24 hours
-      - alert: CriticalLowDiskSpace
-        expr: ( node_filesystem_avail_bytes{mountpoint='/'} / node_filesystem_size_bytes{mountpoint='/'} * 100 ) < 5
-        for: 5m
+          {{` message: 'Node: {{ $labels.node }} is in {{ $labels.condition }}' `}}
+
+      - alert: nodeMemoryPressure
+        expr: kube_node_status_condition{condition="MemoryPressure",status="false"} == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotatations:
+          {{` message: 'Node: {{ $labels.node }} is in {{ $labels.condition }}' `}}
+
+      - alert: nodeNetworkUnavailable
+        expr: kube_node_status_condition{condition="NetworkUnavailable",status="false"} == 0
+        for: 10m
         labels:
           severity: critical
         annotatations:
-          summary: Node free space on root filesystem is critically low - pods may be have evicted
+          {{` message: 'Node: {{ $labels.node }} is in {{ $labels.condition }}' `}}
+
+      - alert: nodeReady
+        expr: kube_node_status_condition{condition="Ready",status="true"} == 0
+        for: 10m
+        labels:
+          severity: critical
+        annotatations:
+          {{` message: 'Node: {{ $labels.node }} is in {{ $labels.condition }}' `}}
+
+      - alert: nodePIDPressure
+        expr: kube_node_status_condition{condition="PIDPressure",status="false"} == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotatations:
+          {{` message: 'Node: {{ $labels.node }} is in {{ $labels.condition }}' `}}
+
     - name: automium
       rules:
       - alert: PendingPods 
