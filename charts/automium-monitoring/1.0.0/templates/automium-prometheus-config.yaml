@@ -68,3 +68,10 @@ data:
           severity: critical
         annotatations:
           summary: Cluster has unschedulable pods for too long
+      - alert: FailedBackup 
+        expr: kube_job_status_failed{job_name=~"automium-backup-job-(.*)", namespace="kube-system"} > 0
+        for: 1m
+        labels:
+          severity: warning
+        annotatations:
+          summary: Cluster has failed backup jobs
