@@ -3,9 +3,9 @@ kind: Service
 metadata:
   labels:
     app: kubernetes-cluster
-    helm.sh/chart: {{ include "kubernetes.chart" . }}
-    app.kubernetes.io/component: {{ include "kubernetes.name" . }}
-    app.kubernetes.io/part-of: {{ include "kubernetes.fullname" . }}
+    helm.sh/chart: {{ include "automium-cluster.chart" . }}
+    app.kubernetes.io/component: {{ include "automium-cluster.name" . }}
+    app.kubernetes.io/part-of: {{ include "automium-cluster.fullname" . }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
   name: {{ include "serviceName" . }}
 spec:

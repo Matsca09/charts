@@ -5,9 +5,9 @@ kind: Service
 metadata:
   labels:
     app: kubernetes-nodepool
-    helm.sh/chart: {{ include "kubernetes.chart" $dot }}
-    app.kubernetes.io/component: {{ include "kubernetes.name" $dot }}
-    app.kubernetes.io/part-of: {{ include "kubernetes.fullname" $dot }}
+    helm.sh/chart: {{ include "automium-cluster.chart" $dot }}
+    app.kubernetes.io/component: {{ include "automium-cluster.name" $dot }}
+    app.kubernetes.io/part-of: {{ include "automium-cluster.fullname" $dot }}
     app.kubernetes.io/managed-by: {{ $dot.Release.Service }}
   name: {{ .name | trunc 63 | trimSuffix "-" }}
 spec:
