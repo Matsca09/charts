@@ -136,3 +136,16 @@ questions:
       - 4
     label: vCPU
     group: Node pool 2
+  - variable: nodepools[1].autoscaler.enabled
+    default: false
+    description: "Autoscaler will change the number of nodes"
+    label: Enable Autoscaler
+    type: boolean
+    show_subquestion_if: true
+    group: Node pool 2
+    subquestions:
+    - variable: nodepools[1].autoscaler.max
+      default: 5
+      description: "To limit how much the pool can scale out"
+      type: int
+      label: Maximum node count
