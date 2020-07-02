@@ -1,0 +1,42 @@
+{{- $dot := . }}
+{{- range .Values.nodepools }}
+{{- if .enabled }}
+apiVersion: core.automium.io/v1beta1
+kind: Service
+metadata:
+  labels:
+    app: kubernetes-nodepool
+    helm.sh/chart: {{ include "automium-cluster.chart" $dot }}
+    app.kubernetes.io/component: {{ include "automium-cluster.name" $dot }}
+    app.kubernetes.io/part-of: {{ include "automium-cluster.fullname" $dot }}
+    app.kubernetes.io/managed-by: {{ $dot.Release.Service }}
+  name: {{ .name | trunc 63 | trimSuffix "-" }}
+spec:
+  env:
+  - name: cluster_name
+    value: {{ include "serviceName" $dot }}
+  - name: kubeadm_custom
+    value: |-
+      kubeletExtraArgs:
+        system-reserved: cpu=500m,memory=500Mi,ephemeral-storage=1Gi
+        kube-reserved: cpu=500m,memory=500Mi,ephemeral-storage=1Gi
+  {{- if .autoscaler.enabled }}
+  - name: autoscaling
+    value: "true"
+  - name: nodes_min
+    value: {{ .replicas | quote }}
+  - name: nodes_max
+    value: {{ .autoscaler.max | quote }}
+  {{- end }}
+  extra: []
+  {{- if eq $dot.Values.provider "entercloudsuite" }}
+  flavor: {{ include "ecsFlavor" . }}
+  {{- else }}
+  flavor: "not implemented"
+  {{- end }}
+  replicas: {{ .replicas }}
+  tags: []
+  version: v{{ include "serviceVersion" $dot.Values.version }}
+---
+{{- end }}
+{{- end }}
