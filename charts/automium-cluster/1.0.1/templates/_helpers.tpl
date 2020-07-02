@@ -43,7 +43,7 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 Get the nearest flavor name for the EnterCloudSuite provider.
 */}}
 {{- define "ecsFlavor" -}}
-{{- $flavors := dict "1-1" "x2" "1-2" "x3" "2-2" "x3" "2-4" "x4" "4-4" "x5" "4-8" "x5" "8-16" "x6" -}}
+{{- $flavors := dict "2-2" "x3" "2-4" "x4" "4-4" "x5" "4-8" "x5" "8-16" "x6" -}}
 {{- $key := (printf "%g-%g" .vcpu .ram) -}}
 {{- printf "%s.%s" "e3standard" (index $flavors $key)}}
 {{- end -}}

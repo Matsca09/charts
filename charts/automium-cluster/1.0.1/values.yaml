@@ -16,6 +16,7 @@ cluster:
 
 nodepools:
   - name: pool1
+    enabled: true
     replicas: 1
     vcpu: 2
     ram: 2
@@ -28,5 +29,5 @@ nodepools:
     vcpu: 2
     ram: 2
     autoscaler:
-      enabled: true
+      enabled: false
       max: 5
