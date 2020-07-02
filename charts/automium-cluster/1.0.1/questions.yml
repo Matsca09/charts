@@ -60,7 +60,7 @@ questions:
 - variable: nodepools[0].enabled
   default: true
   description: "Add a node pool to the cluster"
-  label: Create a second pool
+  label: Create a node pool
   type: boolean
   show_subquestion_if: true
   group: Node pool 1
@@ -112,7 +112,7 @@ questions:
 - variable: nodepools[1].enabled
   default: false
   description: "Add a second pool to the cluster"
-  label: Create a second pool
+  label: Create a node pool
   type: boolean
   show_subquestion_if: true
   group: Node pool 2
