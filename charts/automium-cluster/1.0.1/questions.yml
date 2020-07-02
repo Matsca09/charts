@@ -57,48 +57,58 @@ questions:
   type: string
   label: Version
   group: Cluster Monitoring
-- variable: nodepools[0].name
-  default: ""
-  type: string
-  label: Name
-  group: Node pool 1
-  required: true
-- variable: nodepools[0].replicas
-  default: 1
-  type: int
-  label: Number of  nodes
-  group: Node pool 1
-  required: true
-- variable: nodepools[0].ram
-  default: 2
-  type: enum
-  options:
-    - 2
-    - 4
-    - 8
-  label: RAM (GB)
-  group: Node pool 1
-- variable: nodepools[0].vcpu
-  default: 2
-  type: enum
-  options:
-    - 2
-    - 4
-  label: vCPU
-  group: Node pool 1
-- variable: nodepools[0].autoscaler.enabled
-  default: false
-  description: "Autoscaler will change the number of nodes"
-  label: Enable Autoscaler
+- variable: nodepools[0].enabled
+  default: true
+  description: "Add a node pool to the cluster"
+  label: Create a second pool
   type: boolean
   show_subquestion_if: true
   group: Node pool 1
   subquestions:
+  - variable: nodepools[0].name
+    default: ""
+    type: string
+    label: Name
+    group: Node pool 1
+    required: true
+  - variable: nodepools[0].replicas
+    default: 1
+    type: int
+    label: Number of  nodes
+    group: Node pool 1
+    required: true
+  - variable: nodepools[0].ram
+    default: 2
+    type: enum
+    options:
+      - 2
+      - 4
+      - 8
+    label: RAM (GB)
+    group: Node pool 1
+  - variable: nodepools[0].vcpu
+    default: 2
+    type: enum
+    options:
+      - 2
+      - 4
+    label: vCPU
+    group: Node pool 1
+  - variable: nodepools[0].autoscaler.enabled
+    default: false
+    description: "Autoscaler will change the number of nodes"
+    label: Enable Autoscaler
+    type: boolean
+    show_subquestion_if: true
+    group: Node pool 1
+    subquestions:
   - variable: nodepools[0].autoscaler.max
     default: 5
     description: "To limit how much the pool can scale out"
     type: int
     label: Maximum node count
+    show_if: "nodepools[0].autoscaler.enabled=true"
+    group: Node pool 1
 - variable: nodepools[1].enabled
   default: false
   description: "Add a second pool to the cluster"
@@ -143,9 +153,10 @@ questions:
     type: boolean
     show_subquestion_if: true
     group: Node pool 2
-    subquestions:
-    - variable: nodepools[1].autoscaler.max
-      default: 5
-      description: "To limit how much the pool can scale out"
-      type: int
-      label: Maximum node count
+  - variable: nodepools[1].autoscaler.max
+    default: 5
+    description: "To limit how much the pool can scale out"
+    type: int
+    label: Maximum node count
+    show_if: "nodepools[1].autoscaler.enabled=true"
+    group: Node pool 2
