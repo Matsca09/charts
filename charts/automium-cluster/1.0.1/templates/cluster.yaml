@@ -15,12 +15,18 @@ spec:
       kubeletExtraArgs:
         system-reserved: cpu=500m,memory=500Mi,ephemeral-storage=1Gi
         kube-reserved: cpu=500m,memory=500Mi,ephemeral-storage=1Gi
-  {{- if eq .Values.cluster.monitoring.enabled false }}
+  {{- if empty (without (values .Values.cluster.extra) false)}}
   extra: []
   {{- else }}
   extra:
+  {{- if .Values.cluster.extra.monitoring }}
   - name: monitoring
-    version: {{ .Values.cluster.monitoring.version }}
+    version: {{ .Values.extra.monitoring.version }}
+  {{- end }}
+  {{- if .Values.cluster.extra.backup }}
+  - name: backup
+    version: {{ .Values.extra.backup.version }}
+  {{- end }}
   {{- end }}
   replicas: {{ .Values.cluster.replicas }}
   {{- if eq .Values.provider "entercloudsuite" }}

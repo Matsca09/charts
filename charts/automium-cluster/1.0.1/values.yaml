@@ -10,9 +10,9 @@ cluster:
   vcpu: 2
   ram: 4
   versionOverride: 1.15.11-220
-  monitoring:
-    enabled: true
-    version: 1.0.0
+  extra:
+    monitoring: false
+    backup: false
 
 nodepools:
   - name: pool1
@@ -31,3 +31,9 @@ nodepools:
     autoscaler:
       enabled: false
       max: 5
+
+extra:
+  monitoring:
+    version: 1.0.0
+  backup:
+    version: 1.0.0
