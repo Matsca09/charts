@@ -68,7 +68,7 @@ questions:
   type: string
   label: Version
   show_if: "cluster.extra.backup=true"
-  group: Cluster Monitoring
+  group: Cluster Backup
 - variable: nodepools[0].enabled
   default: true
   description: "Add a node pool to the cluster"
