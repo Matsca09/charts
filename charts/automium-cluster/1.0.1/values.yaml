@@ -37,3 +37,6 @@ extra:
     version: 1.0.0
   backup:
     version: 1.0.0
+    parameters:
+      schedule: 4h
+      retention: 1m

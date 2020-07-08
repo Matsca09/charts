@@ -62,13 +62,31 @@ questions:
   default: false
   type: boolean
   label: Enable Backup
+  show_subquestion_if: true
   group: Cluster Backup
-- variable: extra.backup.version
-  default: "1.0.0"
-  type: string
-  label: Version
-  show_if: "cluster.extra.backup=true"
-  group: Cluster Backup
+  subquestions:
+  - variable: extra.backup.version
+    default: "1.0.0"
+    type: string
+    label: Version
+  - variable: extra.backup.parameters.schedule
+    default: 4h
+    type: enum
+    options:
+      - 4h
+      - 12h
+      - 24h
+    label: Schedule
+    description: "How often run backups"
+  - variable: extra.backup.parameters.retention
+    default: 1m
+    type: enum
+    options:
+      - 7d
+      - 14d
+      - 1m
+    label: Retention
+    description: "How long should backups be archived"
 - variable: nodepools[0].enabled
   default: true
   description: "Add a node pool to the cluster"

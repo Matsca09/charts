@@ -26,6 +26,9 @@ spec:
   {{- if .Values.cluster.extra.backup }}
   - name: backup
     version: {{ .Values.extra.backup.version }}
+    parameters:
+      backupSchedule: {{ include "backupSchedule" .Values.extra.backup.parameters.schedule | quote }}
+      retention: {{ .Values.extra.backup.parameters.retention }}
   {{- end }}
   {{- end }}
   replicas: {{ .Values.cluster.replicas }}

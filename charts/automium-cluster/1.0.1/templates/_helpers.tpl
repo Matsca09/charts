@@ -56,3 +56,11 @@ We add a suffix to the given version.
 {{- $versions := dict "1.15.11" "3-f1915ac4" "1.16.4" "1-7d8af23e" -}}
 {{- printf "%s-%s" . (index $versions .)}}
 {{- end -}}
+
+{{/*
+Get the backup cron schedule.
+*/}}
+{{- define "backupSchedule" -}}
+{{- $schedule := dict "4h" "0 */4 * * *" "12h" "0 */12 * * *" "1d" "0 0 */1 * *" -}}
+{{- printf "%s" (index $schedule .)}}
+{{- end -}}
