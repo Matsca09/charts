@@ -1,4 +1,8 @@
 ---
+# Automium ###
+automium:
+  storageClass:
+    provisioner: "kubernetes.io/cinder"
 # Prometheus ###
 prometheus:
   alertmanager: 
