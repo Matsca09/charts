@@ -5,10 +5,12 @@ automium:
     provisioner: "kubernetes.io/cinder"
 # Prometheus ###
 prometheus:
+  podSecurityPolicy:
+    enabled: true
   alertmanager: 
     enabled: false
   nodeExporter:
-    enabled: true 
+    enabled: true
     tolerations:
     - key: node-role.kubernetes.io/master
       operator: Exists
