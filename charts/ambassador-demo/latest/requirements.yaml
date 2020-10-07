@@ -1,4 +1,0 @@
-dependencies:
-  - name: ambassador
-    version: 2.12.4
-    repository: https://kubernetes-charts.storage.googleapis.com/
