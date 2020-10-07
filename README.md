@@ -1,6 +1,6 @@
 # Automium Charts
 
-Curated collection of Helm charts for Automium.
+Curated collection of Helm charts for Automium. In order to enhance the user experience, charts follow the [Rancher charts specification](https://rancher.com/docs/rancher/v2.x/en/helm-charts/legacy-catalogs/creating-apps/).
 
 ## Maintained
 
