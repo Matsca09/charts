@@ -1,0 +1,56 @@
+apiVersion: core.automium.io/v1beta1
+kind: Service
+metadata:
+  labels:
+    app: kubernetes-cluster
+    helm.sh/chart: {{ include "automium-cluster.chart" . }}
+    app.kubernetes.io/component: {{ include "automium-cluster.name" . }}
+    app.kubernetes.io/part-of: {{ include "automium-cluster.fullname" . }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  name: {{ include "serviceName" . }}
+spec:
+  env:
+  - name: kubeadm_custom
+    {{- if .Values.cluster.extra.security }}
+    value: |-
+      kubeletExtraArgs:
+        kube-reserved: cpu=300m,memory=0.3Gi,ephemeral-storage=1Gi
+        system-reserved: cpu=200m,memory=0.2Gi,ephemeral-storage=1Gi
+        eviction-hard: memory.available<200Mi,nodefs.available<10%
+      apiServer:
+      extraArgs:
+        enable-admission-plugins: ServiceAccount,PodSecurityPolicy,PodNodeSelector
+    {{- else }}
+    value: |-
+      kubeletExtraArgs:
+        kube-reserved: cpu=300m,memory=0.3Gi,ephemeral-storage=1Gi
+        system-reserved: cpu=200m,memory=0.2Gi,ephemeral-storage=1Gi
+        eviction-hard: memory.available<200Mi,nodefs.available<10%
+      apiServer:
+      extraArgs:
+        enable-admission-plugins: ServiceAccount,PodNodeSelector
+  {{- end }}
+  {{- if empty (without (values .Values.cluster.extra) false)}}
+  extra: []
+  {{- else }}
+  extra:
+  {{- if .Values.cluster.extra.monitoring }}
+  - name: monitoring
+    version: {{ .Values.extra.monitoring.version }}
+  {{- end }}
+  {{- if .Values.cluster.extra.backup }}
+  - name: backup
+    version: {{ .Values.extra.backup.version }}
+    parameters:
+      backupSchedule: {{ include "backupSchedule" .Values.extra.backup.parameters.schedule | quote }}
+      retention: {{ .Values.extra.backup.parameters.retention }}
+  {{- end }}
+  {{- end }}
+  replicas: {{ .Values.cluster.replicas }}
+  {{- if eq .Values.provider "entercloudsuite" }}
+  flavor: {{ include "ecsFlavor" .Values.cluster }}
+  {{- else }}
+  flavor: "not implemented"
+  {{- end }}
+  tags: []
+  version: v{{ .Values.cluster.versionOverride | default (include "serviceVersion" .Values.version) }}

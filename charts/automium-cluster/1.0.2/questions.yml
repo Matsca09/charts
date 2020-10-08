@@ -1,0 +1,192 @@
+questions:
+- variable: version
+  default: "1.16.4"
+  description: "Supported versions are 1.15.11 and 1.16.4"
+  type: enum
+  options:
+    - "1.15.11"
+    - "1.16.4"
+  label: Kubernetes Version
+  group: Main Settings
+- variable: cluster.extra.security
+  default: false
+  type: boolean
+  description: "Enable Pod Security Policies"
+  label: Improve Security
+  group: Main Settings
+- variable: cluster.replicas
+  default: 3
+  description: "For a production environment you must set 3 replicas"
+  type: enum
+  options:
+    - 0
+    - 1
+    - 3
+  label: Number of  nodes
+  group: Cluster (Kubernetes control plane with etcd)
+- variable: cluster.ram
+  default: 4
+  type: enum
+  options:
+    - 2
+    - 4
+    - 8
+  label: RAM (GB)
+  group: Cluster (Kubernetes control plane with etcd)
+- variable: cluster.vcpu
+  default: 2
+  type: enum
+  options:
+    - 2
+    - 4
+  label: vCPU
+  group: Cluster (Kubernetes control plane with etcd)
+- variable: cluster.versionOverride
+  default: ""
+  type: string
+  label: Version
+  description: "Set a specific version just for upgrading the cluster"
+  group: Cluster (Kubernetes control plane with etcd)
+- variable: cluster.extra.monitoring
+  default: false
+  type: boolean
+  label: Enable Monitoring
+  group: Cluster Monitoring
+- variable: extra.monitoring.version
+  default: "1.0.0"
+  type: string
+  label: Version
+  show_if: "cluster.extra.monitoring=true"
+  group: Cluster Monitoring
+- variable: cluster.extra.backup
+  default: false
+  type: boolean
+  label: Enable Backup
+  show_subquestion_if: true
+  group: Cluster Backup
+  subquestions:
+  - variable: extra.backup.version
+    default: "1.0.0"
+    type: string
+    label: Version
+  - variable: extra.backup.parameters.schedule
+    default: 4h
+    type: enum
+    options:
+      - 4h
+      - 12h
+      - 24h
+    label: Schedule
+    description: "How often run backups"
+  - variable: extra.backup.parameters.retention
+    default: 1m
+    type: enum
+    options:
+      - 7d
+      - 14d
+      - 1m
+    label: Retention
+    description: "How long should backups be archived"
+- variable: nodepools[0].enabled
+  default: true
+  description: "Add a node pool to the cluster"
+  label: Create a node pool
+  type: boolean
+  show_subquestion_if: true
+  group: Node pool 1
+  subquestions:
+  - variable: nodepools[0].name
+    default: ""
+    type: string
+    label: Name
+    group: Node pool 1
+    required: true
+  - variable: nodepools[0].replicas
+    default: 1
+    type: int
+    label: Number of  nodes
+    group: Node pool 1
+    required: true
+  - variable: nodepools[0].ram
+    default: 2
+    type: enum
+    options:
+      - 2
+      - 4
+      - 8
+    label: RAM (GB)
+    group: Node pool 1
+  - variable: nodepools[0].vcpu
+    default: 2
+    type: enum
+    options:
+      - 2
+      - 4
+    label: vCPU
+    group: Node pool 1
+  - variable: nodepools[0].autoscaler.enabled
+    default: false
+    description: "Autoscaler will change the number of nodes"
+    label: Enable Autoscaler
+    type: boolean
+    show_subquestion_if: true
+    group: Node pool 1
+    subquestions:
+  - variable: nodepools[0].autoscaler.max
+    default: 5
+    description: "To limit how much the pool can scale out"
+    type: int
+    label: Maximum node count
+    show_if: "nodepools[0].autoscaler.enabled=true"
+    group: Node pool 1
+- variable: nodepools[1].enabled
+  default: false
+  description: "Add a second pool to the cluster"
+  label: Create a node pool
+  type: boolean
+  show_subquestion_if: true
+  group: Node pool 2
+  subquestions:
+  - variable: nodepools[1].name
+    default: ""
+    type: string
+    label: Name
+    group: Node pool 2
+    required: true
+  - variable: nodepools[1].replicas
+    default: 1
+    type: int
+    label: Number of  nodes
+    group: Node pool 2
+    required: true
+  - variable: nodepools[1].ram
+    default: 2
+    type: enum
+    options:
+      - 2
+      - 4
+      - 8
+    label: RAM (GB)
+    group: Node pool 2
+  - variable: nodepools[1].vcpu
+    default: 2
+    type: enum
+    options:
+      - 2
+      - 4
+    label: vCPU
+    group: Node pool 2
+  - variable: nodepools[1].autoscaler.enabled
+    default: false
+    description: "Autoscaler will change the number of nodes"
+    label: Enable Autoscaler
+    type: boolean
+    show_subquestion_if: true
+    group: Node pool 2
+  - variable: nodepools[1].autoscaler.max
+    default: 5
+    description: "To limit how much the pool can scale out"
+    type: int
+    label: Maximum node count
+    show_if: "nodepools[1].autoscaler.enabled=true"
+    group: Node pool 2

@@ -1,0 +1,43 @@
+# nameOverride: ""
+provider: entercloudsuite
+
+# supported kubernetes versions: 1.15.11 and 1.16.4
+version: 1.15.11
+
+# use versionOverride just for upgrading the master
+cluster:
+  replicas: 3
+  vcpu: 2
+  ram: 4
+  versionOverride: 1.15.11-3-f1915ac4
+  extra:
+    monitoring: false
+    backup: false
+    security: false
+
+nodepools:
+  - name: pool1
+    enabled: true
+    replicas: 1
+    vcpu: 2
+    ram: 2
+    autoscaler:
+      enabled: true
+      max: 5
+  - name: pool2
+    enabled: false
+    replicas: 1
+    vcpu: 2
+    ram: 2
+    autoscaler:
+      enabled: false
+      max: 5
+
+extra:
+  monitoring:
+    version: 1.0.0
+  backup:
+    version: 1.0.0
+    parameters:
+      schedule: 4h
+      retention: 1m
