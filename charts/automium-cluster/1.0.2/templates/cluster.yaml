@@ -18,8 +18,8 @@ spec:
         system-reserved: cpu=200m,memory=0.2Gi,ephemeral-storage=1Gi
         eviction-hard: memory.available<200Mi,nodefs.available<10%
       apiServer:
-      extraArgs:
-        enable-admission-plugins: ServiceAccount,PodSecurityPolicy,PodNodeSelector
+        extraArgs:
+          enable-admission-plugins: ServiceAccount,PodSecurityPolicy,PodNodeSelector
     {{- else }}
     value: |-
       kubeletExtraArgs:
@@ -27,8 +27,8 @@ spec:
         system-reserved: cpu=200m,memory=0.2Gi,ephemeral-storage=1Gi
         eviction-hard: memory.available<200Mi,nodefs.available<10%
       apiServer:
-      extraArgs:
-        enable-admission-plugins: ServiceAccount,PodNodeSelector
+        extraArgs:
+          enable-admission-plugins: ServiceAccount,PodNodeSelector
   {{- end }}
   {{- if empty (without (values .Values.cluster.extra) false)}}
   extra: []
