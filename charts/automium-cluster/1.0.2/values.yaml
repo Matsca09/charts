@@ -41,3 +41,5 @@ extra:
     parameters:
       schedule: 4h
       retention: 1m
+  security:
+    version: 1.0.0
