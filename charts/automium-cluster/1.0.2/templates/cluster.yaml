@@ -29,7 +29,7 @@ spec:
       apiServer:
         extraArgs:
           enable-admission-plugins: ServiceAccount,PodNodeSelector
-  {{- end }}
+    {{- end }}
   {{- if empty (without (values .Values.cluster.extra) false)}}
   extra: []
   {{- else }}
