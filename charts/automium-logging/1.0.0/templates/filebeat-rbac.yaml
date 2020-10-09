@@ -1,0 +1,72 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: automium-logging-filebeat-sa
+  namespace: kube-system
+  labels:
+    k8s-app: automium-logging-filebeat
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: automium-logging-filebeat-cr
+  labels:
+    k8s-app: automium-logging-filebeat
+rules:
+- apiGroups: [""]
+  resources:
+  - namespaces
+  - pods
+  verbs:
+  - get
+  - watch
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: automium-logging-filebeat-crb
+  labels:
+    k8s-app: automium-logging-filebeat
+subjects:
+- kind: ServiceAccount
+  name: automium-logging-filebeat-sa
+  namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: automium-logging-filebeat-cr
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: automium-logging-filebeat-psp-role
+  namespace: kube-system
+  labels:
+    k8s-app: automium-logging-filebeat
+rules:
+- apiGroups:
+  - policy
+  resourceNames:
+  - automium-logging-filebeat-psp
+  resources:
+  - podsecuritypolicies
+  verbs:
+  - use
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: automium-logging-filebeat-psp-rb
+  namespace: kube-system
+  labels:
+    k8s-app: automium-logging-filebeat
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: automium-logging-filebeat-psp-role
+subjects:
+- kind: ServiceAccount
+  name: automium-logging-filebeat-sa
+  namespace: kube-system

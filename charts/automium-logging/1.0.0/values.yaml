@@ -1,0 +1,7 @@
+---
+esCluster:
+  url: ""
+  username: ""
+  password: ""
+  insecureTLS: false
+  indexName: "automium-logging-%{+dd.MM.yyyy}"

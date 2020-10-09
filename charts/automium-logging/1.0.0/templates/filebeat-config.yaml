@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: automium-logging-filebeat-config
+  namespace: kube-system
+  labels:
+    k8s-app: automium-logging-filebeat
+data:
+  filebeat.yml: |-
+    filebeat.autodiscover:
+      providers:
+        - type: kubernetes
+          host: ${NODE_NAME}
+          hints.enabled: true
+          hints.default_config.enabled: true
+          add_resource_metadata:
+            namespace:
+              enabled: true
+    output.elasticsearch:
+      hosts: ['{{ .Values.esCluster.url }}']
+      username: {{ .Values.esCluster.username }}
+      password: {{ .Values.esCluster.password }}
+      {{ if .Values.esCluster.insecureTLS }}
+      ssl.verification_mode: "none"
+      {{ end }}
+      index: {{ .Values.esCluster.indexName }}
+
