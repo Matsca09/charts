@@ -1,4 +1,5 @@
 ---
+clusterName: ""
 esCluster:
   url: ""
   username: ""

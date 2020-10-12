@@ -17,6 +17,11 @@ data:
           add_resource_metadata:
             namespace:
               enabled: true
+    processors:
+    - add_fields:
+        target: cluster_name
+        fields:
+          name: {{ .Values.clusterName }}
     output.elasticsearch:
       hosts: ['{{ .Values.esCluster.url }}']
       username: {{ .Values.esCluster.username }}
