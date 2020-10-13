@@ -10,7 +10,7 @@ data:
   filebeat.yml: |-
     setup.ilm.enabled: auto
     setup.ilm.rollover_alias: "{{ .Values.esCluster.indexName }}"
-    setup.ilm.pattern: "{now/yyyy.MM}-000001"
+    setup.ilm.pattern: "{now/M{yyyy.MM}}-000001"
     setup.template.name: "{{ .Values.esCluster.indexName }}"
     setup.template.pattern: "{{ .Values.esCluster.indexName }}-*"
     filebeat.autodiscover:
