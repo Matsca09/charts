@@ -5,4 +5,4 @@ esCluster:
   username: ""
   password: ""
   insecureTLS: false
-  indexName: "automium-logging-%{+dd.MM.yyyy}"
+  indexName: "automium-logging"

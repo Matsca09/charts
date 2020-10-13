@@ -8,6 +8,11 @@ metadata:
     k8s-app: automium-logging-filebeat
 data:
   filebeat.yml: |-
+    setup.ilm.enabled: auto
+    setup.ilm.rollover_alias: "{{ .Values.esCluster.indexName }}"
+    setup.ilm.pattern: "{now/yyyy.MM}-000001"
+    setup.template.name: "{{ .Values.esCluster.indexName }}"
+    setup.template.pattern: "{{ .Values.esCluster.indexName }}-*"
     filebeat.autodiscover:
       providers:
         - type: kubernetes
@@ -26,8 +31,8 @@ data:
       hosts: ['{{ .Values.esCluster.url }}']
       username: {{ .Values.esCluster.username }}
       password: {{ .Values.esCluster.password }}
-      {{ if .Values.esCluster.insecureTLS }}
+      {{- if .Values.esCluster.insecureTLS }}
       ssl.verification_mode: "none"
-      {{ end }}
-      index: {{ .Values.esCluster.indexName }}
+      {{- end }}
+      index: "{{ .Values.esCluster.indexName }}-%{+dd.MM.yyyy}"
 
