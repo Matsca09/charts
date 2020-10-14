@@ -10,6 +10,17 @@ metadata:
   name: {{ include "serviceName" . }}
 spec:
   env:
+  {{- if .Values.cluster.extra.security }}
+  - name: kubeadm_custom
+    value: |-
+      kubeletExtraArgs:
+        kube-reserved: cpu=300m,memory=0.3Gi,ephemeral-storage=1Gi
+        system-reserved: cpu=200m,memory=0.2Gi,ephemeral-storage=1Gi
+        eviction-hard: memory.available<200Mi,nodefs.available<10%
+      apiServer:
+        extraArgs:
+          enable-admission-plugins: ServiceAccount,PodSecurityPolicy,PodNodeSelector
+  {{- else }}
   - name: kubeadm_custom
     value: |-
       kubeletExtraArgs:
@@ -19,6 +30,7 @@ spec:
       apiServer:
         extraArgs:
           enable-admission-plugins: ServiceAccount,PodNodeSelector
+  {{- end }}
   {{- if empty (without (values .Values.cluster.extra) false)}}
   extra: []
   {{- else }}
