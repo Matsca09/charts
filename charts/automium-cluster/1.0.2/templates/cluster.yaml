@@ -46,6 +46,15 @@ spec:
       backupSchedule: {{ include "backupSchedule" .Values.extra.backup.parameters.schedule | quote }}
       retention: {{ .Values.extra.backup.parameters.retention }}
   {{- end }}
+  {{- if .Values.cluster.extra.logging }}
+  - name: logging
+    version: {{ .Values.extra.logging.version }}
+    parameters:
+      esCluster.insecureTLS: "true"
+      esCluster.username: {{ .Values.extra.logging.parameters.username }}
+      esCluster.password: {{ .Values.extra.logging.parameters.password }}
+      esCluster.url: {{ .Values.extra.logging.parameters.url }}
+  {{- end }}
   {{- end }}
   replicas: {{ .Values.cluster.replicas }}
   {{- if eq .Values.provider "entercloudsuite" }}

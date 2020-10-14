@@ -87,6 +87,30 @@ questions:
       - 1m
     label: Retention
     description: "How long should backups be archived"
+- variable: cluster.extra.logging
+  default: false
+  type: boolean
+  label: Enable Logging
+  show_subquestion_if: true
+  group: Cluster Logging
+  subquestions:
+  - variable: extra.logging.version
+    default: "1.0.0"
+    type: string
+    label: Version
+  - variable: extra.logging.username
+    default: "elastic"
+    type: string
+    label: Username
+  - variable: extra.logging.password
+    default: ""
+    type: string
+    label: Password
+  - variable: extra.logging.url
+    default: ""
+    type: string
+    label: API URL
+    description: "https://elastic-api:port"
 - variable: nodepools[0].enabled
   default: true
   description: "Add a node pool to the cluster"

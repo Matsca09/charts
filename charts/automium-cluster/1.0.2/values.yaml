@@ -13,6 +13,7 @@ cluster:
   extra:
     monitoring: false
     backup: false
+    logging: false
     security: false
 
 nodepools:
@@ -41,5 +42,11 @@ extra:
     parameters:
       schedule: 4h
       retention: 1m
+  logging:
+    version: 1.0.0
+    parameters:
+      username: elastic
+      password: password
+      url: https://elastic-api
   security:
     version: 1.0.0
