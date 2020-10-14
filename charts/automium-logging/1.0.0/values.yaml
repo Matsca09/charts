@@ -1,0 +1,8 @@
+---
+clusterName: ""
+esCluster:
+  url: ""
+  username: ""
+  password: ""
+  insecureTLS: false
+  indexName: "automium-logging"
