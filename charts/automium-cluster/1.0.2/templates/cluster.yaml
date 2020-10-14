@@ -11,16 +11,14 @@ metadata:
 spec:
   env:
   - name: kubeadm_custom
-    {{- if .Values.cluster.extra.security }}
     value: |-
       kubeletExtraArgs:
         kube-reserved: cpu=300m,memory=0.3Gi,ephemeral-storage=1Gi
         system-reserved: cpu=200m,memory=0.2Gi,ephemeral-storage=1Gi
-        eviction-hard: memory.available<200Mi,nodefs.available<10%
+        eviction-hard: nodefs.available<10%,memory.available<200Mi
       apiServer:
         extraArgs:
           enable-admission-plugins: ServiceAccount,PodSecurityPolicy,PodNodeSelector
-    {{- end }}
   {{- if empty (without (values .Values.cluster.extra) false)}}
   extra: []
   {{- else }}
