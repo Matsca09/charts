@@ -98,15 +98,15 @@ questions:
     default: "1.0.0"
     type: string
     label: Version
-  - variable: extra.logging.username
+  - variable: extra.logging.parameters.username
     default: "elastic"
     type: string
     label: Username
-  - variable: extra.logging.password
+  - variable: extra.logging.parameters.password
     default: ""
     type: string
     label: Password
-  - variable: extra.logging.url
+  - variable: extra.logging.parameters.url
     default: ""
     type: string
     label: API URL
