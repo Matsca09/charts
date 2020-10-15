@@ -55,6 +55,10 @@ spec:
       esCluster.password: {{ .Values.extra.logging.parameters.password }}
       esCluster.url: {{ .Values.extra.logging.parameters.url }}
   {{- end }}
+  {{- if .Values.cluster.extra.security }}
+  - name: security
+    version: {{ .Values.extra.security.version }}
+  {{- end }}
   {{- end }}
   replicas: {{ .Values.cluster.replicas }}
   {{- if eq .Values.provider "entercloudsuite" }}
