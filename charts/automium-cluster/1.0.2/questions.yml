@@ -214,3 +214,40 @@ questions:
     label: Maximum node count
     show_if: "nodepools[1].autoscaler.enabled=true"
     group: Node pool 2
+- variable: ingresspool.enabled
+  default: true
+  description: "Add ingress nodes to the cluster"
+  label: Create the ingress pool
+  type: boolean
+  show_subquestion_if: true
+  group: Ingress nodes
+  subquestions:
+  - variable: ingresspool.name
+    default: ""
+    type: string
+    label: Name
+    group: Ingress nodes
+    required: true
+  - variable: ingresspool.replicas
+    default: 2
+    type: int
+    label: Number of  nodes
+    group: Ingress nodes
+    required: true
+  - variable: ingresspool.ram
+    default: 2
+    type: enum
+    options:
+      - 2
+      - 4
+      - 8
+    label: RAM (GB)
+    group: Ingress nodes
+  - variable: ingresspool.vcpu
+    default: 2
+    type: enum
+    options:
+      - 2
+      - 4
+    label: vCPU
+    group: Ingress nodes
