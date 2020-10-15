@@ -14,6 +14,7 @@ spec:
     metadata:
       labels:
         k8s-app: automium-logging-filebeat
+        releaseRevision: {{ .Release.Revision | quote }}
     spec:
       serviceAccountName: automium-logging-filebeat-sa
       terminationGracePeriodSeconds: 30
