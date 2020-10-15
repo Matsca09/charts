@@ -215,7 +215,7 @@ questions:
     show_if: "nodepools[1].autoscaler.enabled=true"
     group: Node pool 2
 - variable: ingresspool.enabled
-  default: true
+  default: false
   description: "Add ingress nodes to the cluster"
   label: Create the ingress pool
   type: boolean
