@@ -10,6 +10,7 @@ Curated collection of Helm charts for Automium. In order to enhance the user exp
 | automium-ingress   | This chart deploys the nginx ingress controller into a specific nodepool | no |
 | automium-backup   | This chart provides components to backup a Kubernetes cluster | yes |
 | automium-monitoring   | This chart provides components for monitoring a Kubernetes cluster | yes |
+| automium-logging   | This chart provides components for managing Kubernetes cluster logs | yes |
 
 *Extra charts are not meant to be used directly by the user. Read the doc https://doc.automium.io/ for more info.
 
