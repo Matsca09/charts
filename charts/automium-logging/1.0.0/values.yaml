@@ -6,3 +6,13 @@ esCluster:
   password: ""
   insecureTLS: false
   indexName: "automium-logging"
+  ILMpolicy_name: automium
+ilm:
+  actions:
+    rollover:
+      maximumIndexSize: 50gb
+      max_age: 60d
+    delete:
+      min_age: 60d
+  
+

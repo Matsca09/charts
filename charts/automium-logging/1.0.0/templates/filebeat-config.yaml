@@ -11,8 +11,12 @@ data:
     setup.ilm.enabled: auto
     setup.ilm.rollover_alias: "{{ .Values.esCluster.indexName }}"
     setup.ilm.pattern: "{now/M{yyyy.MM}}-000001"
+    setup.ilm.policy_name: "{{ .Values.esCluster.ILMpolicy_name }}"
+    setup.ilm.policy_file: "/etc/filebeat/ILMTemplate.yaml"
     setup.template.name: "{{ .Values.esCluster.indexName }}"
     setup.template.pattern: "{{ .Values.esCluster.indexName }}-*"
+    setup.template.settings.index.lifecycle.name: "{{ .Values.esCluster.ILMpolicy_name }}"
+
     filebeat.autodiscover:
       providers:
         - type: kubernetes
@@ -35,4 +39,28 @@ data:
       ssl.verification_mode: "none"
       {{- end }}
       index: "{{ .Values.esCluster.indexName }}-%{+dd.MM.yyyy}"
-
+  ILMTemplate.yaml: |-
+    {
+      "policy": {
+        "phases": {
+          "hot": {
+            "min_age": "0ms",
+            "actions": {
+              "rollover": {
+                "max_age": "{{ .Values.ilm.actions.rollover.max_age }}",
+                "max_size": "{{ .Values.ilm.actions.rollover.maximumIndexSize }}"
+              },
+              "set_priority": {
+                "priority": null
+              }
+            }
+          },
+          "delete": {
+            "min_age": "{{ .Values.ilm.actions.delete.min_age }}",
+            "actions": {
+              "delete": {}
+            }
+          }
+        }
+      }
+    }

@@ -40,7 +40,13 @@ spec:
             memory: 100Mi
         volumeMounts:
         - name: config
-          mountPath: /etc/filebeat
+          mountPath: "/etc/filebeat/filebeat.yml"
+          subPath: filebeat.yml
+          readOnly: true
+        - name: config
+          mountPath: /etc/filebeat/ILMTemplate.yaml
+          subPath: ILMTemplate.yaml
+          readOnly: true
         - name: data
           mountPath: /usr/share/filebeat/data
         - name: varlibdockercontainers
