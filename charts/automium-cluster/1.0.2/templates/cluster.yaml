@@ -14,7 +14,7 @@ spec:
   - name: kubeadm_custom
     value: |-
       kubeletExtraArgs:
-        kube-reserved: cpu=300m,memory=0.3Gi,ephemeral-storage=1Gi
+        kube-reserved: cpu=300m,memory=0.5Gi,ephemeral-storage=1Gi
         system-reserved: cpu=200m,memory=0.2Gi,ephemeral-storage=1Gi
         eviction-hard: memory.available<200Mi,nodefs.available<10%
       apiServer:
@@ -24,7 +24,7 @@ spec:
   - name: kubeadm_custom
     value: |-
       kubeletExtraArgs:
-        kube-reserved: cpu=300m,memory=0.3Gi,ephemeral-storage=1Gi
+        kube-reserved: cpu=300m,memory=0.5Gi,ephemeral-storage=1Gi
         system-reserved: cpu=200m,memory=0.2Gi,ephemeral-storage=1Gi
         eviction-hard: memory.available<200Mi,nodefs.available<10%
       apiServer:

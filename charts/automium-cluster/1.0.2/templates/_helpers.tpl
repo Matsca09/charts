@@ -53,7 +53,7 @@ Get the service internal version.
 We add a suffix to the given version.
 */}}
 {{- define "serviceVersion" -}}
-{{- $versions := dict "1.15.11" "3-f1915ac4" "1.16.4" "2-b08c67e5" -}}
+{{- $versions := dict "1.15.12" "1-ed97ae8e" "1.16.15" "1-65e9139c" -}}
 {{- printf "%s-%s" . (index $versions .)}}
 {{- end -}}
 
