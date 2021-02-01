@@ -1,11 +1,12 @@
 questions:
 - variable: version
   default: "1.16.15"
-  description: "Supported versions are 1.15.12 and 1.16.15"
+  description: "Supported versions are 1.16.15 and 1.17.17"
   type: enum
   options:
     - "1.15.12"
     - "1.16.15"
+    - "1.17.17"
   label: Kubernetes Version
   group: Main Settings
 - variable: cluster.extra.security
