@@ -6,5 +6,5 @@ metadata:
   name: cluster-autoscaler-config
   namespace: kube-system
 data:
-  cloudprovider.yaml: |
+  cloudprovider.yaml: |-
 {{ .Values.cloudProviderConfig | toYaml | indent 4 }}
