@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   labels:
     k8s-app: cluster-autoscaler
-    k8s-app-revision: {{ .Release.Revision }} 
+    k8s-app-revision: {{ .Release.Revision | quote }} 
   name: automium-cluster-autoscaler
   namespace: kube-system
 spec:
