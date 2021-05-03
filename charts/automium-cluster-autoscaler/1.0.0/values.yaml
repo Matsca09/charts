@@ -1,0 +1,5 @@
+---
+cloudProviderConfig:
+  clusterName: ""
+  autoscalingRules: []
+  dryRun: true

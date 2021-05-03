@@ -1,0 +1,52 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    k8s-app: cluster-autoscaler
+    k8s-app-revision: {{ .Release.Revision }} 
+  name: automium-cluster-autoscaler
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: cluster-autoscaler
+  template:
+    metadata:
+      labels:
+        k8s-app: cluster-autoscaler
+        k8s-app-revision: {{ .Release.Revision }} 
+    spec:
+      containers:
+        - name: cluster-autoscaler
+          image: automium/cluster-autoscaler:v1.15
+          imagePullPolicy: "Always"
+          args:
+          - --logtostderr
+          - -v=5
+          - --cloud-provider=automium
+          - --cloud-config=/etc/autoscaler/cloudprovider.yaml
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 32Mi
+          volumeMounts:
+            - mountPath: /etc/autoscaler
+              name: autoscaler-config
+              readOnly: true
+      serviceAccountName: cluster-autoscaler
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      tolerations:
+        - effect: NoSchedule
+          operator: "Equal"
+          value: "true"
+          key: node-role.kubernetes.io/master
+      volumes:
+        - name: autoscaler-config
+          configMap:
+            name: cluster-autoscaler-config

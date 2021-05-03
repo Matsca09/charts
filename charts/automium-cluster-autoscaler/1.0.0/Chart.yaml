@@ -1,0 +1,10 @@
+apiVersion: v1
+appVersion: "v1.15"
+description: Specific cluster-autoscaler for Automium-managed clusters
+icon: https://github.com/automium.png
+name: automium-cluster-autoscaler
+version: 1.0.0
+maintainers:
+- name: f-minzoni
+  email: fminzoni@enter.eu
+- name: Matsca09
