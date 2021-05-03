@@ -16,7 +16,7 @@ spec:
     metadata:
       labels:
         k8s-app: cluster-autoscaler
-        k8s-app-revision: {{ .Release.Revision }} 
+        k8s-app-revision: {{ .Release.Revision | quote }} 
     spec:
       containers:
         - name: cluster-autoscaler
