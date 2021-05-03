@@ -43,8 +43,7 @@ spec:
         node-role.kubernetes.io/master: ""
       tolerations:
         - effect: NoSchedule
-          operator: "Equal"
-          value: "true"
+          operator: Exists
           key: node-role.kubernetes.io/master
       volumes:
         - name: autoscaler-config
